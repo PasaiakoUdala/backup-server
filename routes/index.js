@@ -15,14 +15,20 @@ router.get('/servers', function (req, res, next) {
     const zerrenda = fs.readdirSync(srcpath)
         .filter(file => fs.lstatSync(path.join(srcpath, file)).isDirectory());
 
-    return res.send(200,zerrenda);
+    return res.status(200).send(zerrenda);
 
 });
 
 router.get('/ls', function (req, res, next) {
-    const srcpath = '/mnt/nfs/Aplik';
+    // const srcpath = '/mnt/nfs/Aplik';
+    const srcpath = '/home/local/PASAIA/iibarguren/Deskargak';
     const tree = dirTree(srcpath);
-    return res.json( tree);
+    return res.status(200).json(tree);
+
+    // const zerrenda = fs.readdirSync(srcpath)
+    //     .filter(file => fs.lstatSync(path.join(srcpath, file)).isDirectory());
+
+    // return res.status(200).send(zerrenda);
 
 });
 
