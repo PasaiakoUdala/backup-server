@@ -22,8 +22,8 @@ router.get('/servers', function (req, res, next) {
 });
 
 router.get('/lsdir', function (req, res, next) {
-    // const srcpath = '/mnt/nfs/Aplik';
-    const srcpath = '/home/local/PASAIA/iibarguren/Deskargak';
+    const srcpath = '/mnt/nfs/Aplik/.zfs/snapshot/';
+    // const srcpath = '/home/local/PASAIA/iibarguren/Deskargak';
 
     // const tree = dirTree(srcpath);
     const tree = dirTree(srcpath,null,null,true);
