@@ -46,6 +46,11 @@ function directoryTree (path, options, onEachFile,foldersOnly=false) {
         item.size = stats.size;  // File size in bytes
         item.extension = ext;
         item.type = constants.FILE;
+        item.atime = stats.atime;
+        item.mtime = stats.mtime;
+        item.ctime = stats.ctime;
+        item.birthtime = stats.birthtime;
+        item.mode = '0' + (stats.mode & parseInt('777', 8)).toString(8);
         if (onEachFile) {
             onEachFile(item, PATH);
         }
@@ -85,6 +90,11 @@ function directoryTree (path, options, onEachFile,foldersOnly=false) {
         }
 
         item.size = item.children.reduce((prev, cur) => prev + cur.size, 0);
+        item.atime = stats.atime;
+        item.mtime = stats.mtime;
+        item.ctime = stats.ctime;
+        item.birthtime = stats.birthtime;
+        item.mode = '0' + (stats.mode & parseInt('777', 8)).toString(8);
         item.type = constants.DIRECTORY;
     } else {
         return null; // Or set item.size = 0 for devices, FIFO and sockets ?
