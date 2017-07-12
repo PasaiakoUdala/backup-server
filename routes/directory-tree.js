@@ -20,10 +20,17 @@ function safeReadDirSync (path) {
     return dirData;
 }
 
-function directoryTree (path, options, onEachFile,foldersOnly=false) {
+function directoryTree (path, options, onEachFile,foldersOnly=false, zenbat = 0) {
     const name = PATH.basename(path);
     const item = { path, name };
     let stats;
+
+    if (zenbat > 3) {
+        return;
+    } else {
+        zenbat=zenbat+1;
+    }
+
 
     try { stats = FS.statSync(path); }
     catch (e) { return null; }
@@ -60,8 +67,10 @@ function directoryTree (path, options, onEachFile,foldersOnly=false) {
         if (dirData === null) return null;
 
         if (foldersOnly === true) {
-            item.children = FS.readdirSync(path)
-                .map(child => directoryTree(PATH.join(path, child),null, onEachFile, foldersOnly))
+            item.children = FS.readdirSync(path).map(
+                child => directoryTree(
+                    PATH.join(path, child),null, onEachFile, foldersOnly, zenbat)
+                )
                 .filter(e => !!e);
         } else {
             item.children = FS.readdirSync(path)
