@@ -26,7 +26,7 @@ router.get('/lsdir', function (req, res, next) {
     const query = url_parts.query;
     const dir = query.dir;
 
-    const tree = dirTree( dir,null,null,true);
+    const tree = dirTree( dir, {exclude:'/mnt/nfs/jails/'},null,true);
 
     return res.status(200).json(tree);
 

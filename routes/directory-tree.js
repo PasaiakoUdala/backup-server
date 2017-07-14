@@ -12,8 +12,10 @@ function safeReadDirSync (path) {
     try {
         dirData = FS.readdirSync(path);
     } catch(ex) {
-        if (ex.code == "EACCES")
+        if (ex.code === "EACCES")
         //User does not have permissions, ignore directory
+            return null;
+        if (ex.code === "EIO")
             return null;
         else throw ex;
     }
@@ -35,9 +37,15 @@ function directoryTree (path, options, onEachFile,foldersOnly=false, zenbat = 0)
     try { stats = FS.statSync(path); }
     catch (e) { return null; }
 
-    // Skip if it matches the exclude regex
-    if (options && options.exclude && options.exclude.test(path))
+    try {
+        // Skip if it matches the exclude regex
+        let regxx = new RegExp(path.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') );
+        // if (options && options.exclude && options.exclude.test(path))
+        if (options && options.exclude && new RegExp(options.exclude).test(path))
+            return null;
+    } catch (e) {
         return null;
+    }
 
     if (stats.isFile()) {
         if ( foldersOnly === true ) {
@@ -74,8 +82,11 @@ function directoryTree (path, options, onEachFile,foldersOnly=false, zenbat = 0)
                 .filter(e => !!e);
         } else {
             item.children = FS.readdirSync(path)
-                .map(child => directoryTree(PATH.join(path, child),null, onEachFile, foldersOnly))
+                .map(child => directoryTree(PATH.join(path, child),null, onEachFile, foldersOnly, zenbat))
                 .sort((a, b) => {
+                    if ( a === null || b === null) {
+                        return -1;
+                    }
                     if (a.type < b.type) {
                         return -1;
                     }
