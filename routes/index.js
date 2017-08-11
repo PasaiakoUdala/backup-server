@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const dirTree = require('./directory-tree');
+const listDir = require('./list-dir');
 const http = require('http');
 const url  = require('url');
 const mime = require('mime');
@@ -20,6 +21,18 @@ router.get('/servers', function (req, res, next) {
     return res.status(200).send(zerrenda);
 
 });
+
+router.get('/dirlist', function (req, res, next) {
+    const url_parts = url.parse(req.url, true);
+    const query = url_parts.query;
+    const dir = query.dir;
+
+    const tree = listDir( dir, {exclude:'/mnt/nfs/jails/'},null);
+
+    return res.status(200).json(tree);
+
+});
+
 
 router.get('/lsdir', function (req, res, next) {
     const url_parts = url.parse(req.url, true);
