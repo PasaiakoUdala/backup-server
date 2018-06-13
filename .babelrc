@@ -1,0 +1,8 @@
+{
+  "presets": [
+    "react-native", "react-native-dotenv",
+    ["env", { "targets": { "node": true } }],
+    "stage-3",
+    "react"
+  ]
+}

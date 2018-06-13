@@ -1,5 +1,7 @@
 # Backaup kudeatzailea
 
+
+
 node_modules barruan, direcory tree paketean egokitzapenak egin behar dira:
 
     else if (stats.isDirectory()) {
