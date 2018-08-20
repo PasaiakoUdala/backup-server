@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = express();
 const fs = require('fs');
 const path = require('path');
 const dirTree = require('./directory-tree');
@@ -7,6 +7,11 @@ const listDir = require('./list-dir');
 const http = require('http');
 const url  = require('url');
 const mime = require('mime');
+const bodyParser = require('body-parser');
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: true }));
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -32,7 +37,6 @@ router.get('/dirlist', function (req, res, next) {
     return res.status(200).json(tree);
 
 });
-
 
 router.get('/lsdir', function (req, res, next) {
     const url_parts = url.parse(req.url, true);
@@ -96,18 +100,22 @@ router.get('/lssnapshoot', function (req, res, next) {
 
 });
 
-router.get('/download', function (req, res, next) {
-    const url_parts = url.parse(req.url, true);
-    const query = url_parts.query;
-    const file = query.dir;
-    const filename = path.basename(file);
-    const mimetype = mime.lookup(file);
+router.get('/jetsi', function (req, res, next) {
+  console.log("GET download");
+  return res.status(200).send("jetxi");
+});
 
-    res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-    res.setHeader('Content-type', mimetype);
+router.post('/jetsi', function (req, res, next) {
+    let filesFolders = req.body.fs;
 
-    let filestream = fs.createReadStream(file);
-    filestream.pipe(res);
+    for (var i = 0, len = filesFolders.length; i < len; i++) {
+      console.log(filesFolders[i].item);
+
+        $ff = filesFolders[i].item;
+
+    }
+
+  //return res.status(200).send("test");
 });
 
 module.exports = router;
