@@ -106,16 +106,72 @@ router.get('/jetsi', function (req, res, next) {
 });
 
 router.post('/jetsi', function (req, res, next) {
+    console.log("JETSI _ POST");
+
+    let archiver = require('archiver');
+    const $filename = "/tmp/example.zip";
+    let output = fs.createWriteStream($filename);
+    let archive = archiver('zip', {
+        zlib: { level: 9 } // Sets the compression level.
+    });
+
+    // listen for all archive data to be written
+// 'close' event is fired only when a file descriptor is involved
+    output.on('close', function() {
+        console.log(archive.pointer() + ' total bytes');
+        console.log('archiver has been finalized and the output file descriptor has closed.');
+        res.download($filename);
+    });
+
+// This event is fired when the data source is drained no matter what was the data source.
+// It is not part of this library but rather from the NodeJS Stream API.
+// @see: https://nodejs.org/api/stream.html#stream_event_end
+    output.on('end', function() {
+        console.log('Data has been drained');
+    });
+
+// good practice to catch warnings (ie stat failures and other non-blocking errors)
+    archive.on('warning', function(err) {
+        if (err.code === 'ENOENT') {
+            // log warning
+        } else {
+            // throw error
+            throw err;
+        }
+    });
+
+// good practice to catch this error explicitly
+    archive.on('error', function(err) {
+        throw err;
+    });
+
+// pipe archive data to the file
+    archive.pipe(output);
+
     let filesFolders = req.body.fs;
+    const len = filesFolders.length;
 
-    for (var i = 0, len = filesFolders.length; i < len; i++) {
-      console.log(filesFolders[i].item);
+    if ( len < 1) { return; }
 
-        $ff = filesFolders[i].item;
+    for (let i = 0, len = filesFolders.length; i < len; i++) {
 
+        let $fileFolder = filesFolders[i];
+
+        if (fs.lstatSync($fileFolder).isDirectory()) {
+            archive.directory($fileFolder,true);
+        } else {
+            archive.file($fileFolder);
+        }
+
+        console.log("****************************************************************");
+        console.log($fileFolder);
+        console.log("****************************************************************");
+        
     }
 
-  //return res.status(200).send("test");
+    archive.finalize();
+
+
 });
 
 module.exports = router;
