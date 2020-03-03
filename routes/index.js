@@ -166,12 +166,27 @@ router.post('/jetsi', function (req, res, next) {
         console.log("****************************************************************");
         console.log($fileFolder);
         console.log("****************************************************************");
-        
+
     }
 
     archive.finalize();
 
 
 });
+
+router.get('/download', function (req, res, next) {
+    const url_parts = url.parse(req.url, true);
+    const query = url_parts.query;
+    const file = query.dir;
+    const filename = path.basename(file);
+    const mimetype = mime.lookup(file);
+
+    res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+    res.setHeader('Content-type', mimetype);
+
+    let filestream = fs.createReadStream(file);
+    filestream.pipe(res);
+});
+
 
 module.exports = router;

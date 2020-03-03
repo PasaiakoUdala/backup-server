@@ -5,7 +5,7 @@ const PATH = require('path');
 const constants = {
     DIRECTORY: 'directory',
     FILE: 'file'
-}
+};
 
 function safeReadDirSync(path) {
     let dirData = {};
