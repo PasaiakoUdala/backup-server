@@ -153,12 +153,23 @@ router.post('/jetsi', function (req, res, next) {
 
     if ( len < 1) { return; }
 
+    let initPath="";
     for (let i = 0, len = filesFolders.length; i < len; i++) {
 
         let $fileFolder = filesFolders[i];
+        let spath = filesFolders[0];
+        let paths = [];
+        let k;
+
+        for(let k = 1 ; k < spath.length-1 ; k++) {
+            if(spath[k]==='/') paths.push(spath.substr(0,k));
+        }
+        let endPaths = paths[paths.length-1];
+
 
         if (fs.lstatSync($fileFolder).isDirectory()) {
-            archive.directory($fileFolder,true);
+            // archive.directory($fileFolder,true);
+            archive.directory($fileFolder,$fileFolder.replace(endPaths,''));
         } else {
             archive.file($fileFolder);
         }
