@@ -68,9 +68,13 @@ router.get('/lssnapshoot', function (req, res, next) {
     let resp = null;
     dir = dir + "/.zfs";
 
+    console.log(dir);
     if (fs.existsSync(dir)) {
+        console.log("barruan");
         dir = dir + "/snapshot";
+        console.log(dir);
         if (fs.existsSync(dir)) {
+            console.log("existitzen da");
             zerrenda = fs.readdirSync(dir).filter(
                 file => fs.lstatSync(
                     path.join(dir, file)).isDirectory()
@@ -78,20 +82,47 @@ router.get('/lssnapshoot', function (req, res, next) {
         }
     }
 
-    if ( zerrenda !== null ) {
-        let rest = zerrenda.reverse().map(function (x) {
-            let dt = x.split("-")[1].split(".");
-            let ano = dt[0].substring(0, 4);
-            let mes = dt[0].substring(4, 6);
-            let dia = dt[0].substring(6, 8);
-            let hora = dt[1].substring(0, 2);
-            let min = dt[1].substring(2, 4);
+    // if ( zerrenda !== null ) {
+    //     let rest = zerrenda.reverse().map(function (x) {
+    //         console.log("----------------");
+    //         console.log(x);
+    //         console.log("----------------");
+    //         let dt = x.split("-")[1].split(".");
+    //         console.log("dt");
+    //         console.log(dt);
+    //         let ano = dt[0].substring(0, 4);
+    //         let mes = dt[0].substring(4, 6);
+    //         let dia = dt[0].substring(6, 8);
+    //         let hora = dt[1].substring(0, 2);
+    //         let min = dt[1].substring(2, 4);
 
-            let r;
-            r = ano + "-" + mes + "-" + dia + " " + hora + ":" + min;
-            return {dir:query.dir,fs:x,dt:r};
+    //         let r;
+    //         r = ano + "-" + mes + "-" + dia + " " + hora + ":" + min;
+    //         return {dir:query.dir,fs:x,dt:r};
+    //     });
+
+    //     return res.status(200).send(rest);
+    // }
+    if (zerrenda !== null) {
+        const rest = zerrenda.reverse().map((str) => {
+            
+            const regex = /(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2})/;
+            const match = str.match(regex);
+
+            if (match) {
+                const date = match[1]; // Extracted date: 2024-10-15
+                const time = match[2]; // Extracted time: 10-00
+                const dateTimeString = `${date} ${time.replace('-', ':')}`; // Format time as HH:MM
+                console.log("Date:", date);
+                console.log("Time:", time);
+                console.log(dateTimeString); // Output: 2024-10-15 10:00
+                return { dir: query.dir, fs: str, dt: dateTimeString};
+            }
+            
+            return;
+            
         });
-
+    
         return res.status(200).send(rest);
     }
 
